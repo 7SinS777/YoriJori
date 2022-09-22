@@ -31,27 +31,27 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <body>
-<div class="my-5" id="submain">
-	<h3 class="text-center text-danger">게시판</h3>
-	<a id="recipeRegister" class="btn btn-primary" href="recipeRegister">레시피 작성</a>
-	<div class="btn-group btn-group-sm" style="float: right;">
-		<button type="button" class="btn btn-primary" id="listHits" name="hits">조회순</button>
-		<button type="button" class="btn btn-primary" id="listTimes" name="times">최신순</button>
-	</div>
-	<input type="hidden" value="${search}" id="searchResult">
-	<input type="hidden" value="${searchWhat}" id="searchWhatResult">
-	<c:forEach var="types" items="${recipeTypes}">
-		<input type="hidden" value="${types}" name="recipeTypes">
-	</c:forEach>
-	<c:forEach var="styles" items="${recipeStyles}">
-		<input type="hidden" value="${styles}" name="recipeStyles">
-	</c:forEach>
-	<c:forEach var="peoples" items="${recipePeoples}">
-		<input type="hidden" value="${peoples}" name="recipePeoples">
-	</c:forEach>
-	<c:forEach var="times" items="${recipeTimes}">
-		<input type="hidden" value="${times}" name="recipeTimes">
-	</c:forEach>
+<h3 class="text-center text-danger">게시판</h3>
+<a id="recipeRegister" class="btn btn-primary" href="recipeRegister">레시피 작성</a>
+<div class="btn-group btn-group-sm" style="float: right;">
+	<button type="button" class="btn btn-primary" id="listHits" name="hits">조회순</button>
+	<button type="button" class="btn btn-primary" id="listTimes" name="times">최신순</button>
+</div>
+<input type="hidden" value="${viewType}" id="viewType">
+<input type="hidden" value="${search}" id="searchResult">
+<input type="hidden" value="${searchWhat}" id="searchWhatResult">
+<c:forEach var="types" items="${recipeTypes}">
+	<input type="hidden" value="${types}" name="recipeTypes">
+</c:forEach>
+<c:forEach var="styles" items="${recipeStyles}">
+	<input type="hidden" value="${styles}" name="recipeStyles">
+</c:forEach>
+<c:forEach var="peoples" items="${recipePeoples}">
+	<input type="hidden" value="${peoples}" name="recipePeoples">
+</c:forEach>
+<c:forEach var="times" items="${recipeTimes}">
+	<input type="hidden" value="${times}" name="recipeTimes">
+</c:forEach>
 <table id="recipeList" class="table table-hover text-center">
 	<thead>
 		<tr>
@@ -80,7 +80,6 @@
 		</c:forEach>
 	</tbody>
 </table>
-</div>
 
 <script>
 $(document).ready(function() {
@@ -122,7 +121,7 @@ $(document).ready(function() {
 		$.ajax({
 			url : "recipeRegister",
 			type : "get",
-			data : "",
+			data : formData,
 			success : function(data) {
 				$("#body").html(data);
 			},
@@ -138,10 +137,7 @@ $(document).ready(function() {
 		$.ajax({
 			url : "recipeAllView?chose=hits",
 			type : "get",
-			data : {
-				search : search,
-				searchWhat : searchWhat
-			},
+			data : formData,
 			success : function(data) {
 				$("#body").html(data);
 			},
@@ -157,10 +153,7 @@ $(document).ready(function() {
 		$.ajax({
 			url : "recipeAllView?chose=times",
 			type : "get",
-			data : {
-				search : search,
-				searchWhat : searchWhat
-			},
+			data : formData,
 			success : function(data) {
 				$("#body").html(data);
 			},
@@ -177,10 +170,7 @@ $(document).ready(function() {
 		$.ajax({
 			url : ceo.attr("href"),
 			type : "get",
-			data : {
-				search : search,
-				searchWhat : searchWhat
-			},
+			data : formData,
 			success : function(data) {
 				$("#body").html(data);
 			},

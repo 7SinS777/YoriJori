@@ -58,34 +58,34 @@
 	<c:forEach var="times" items="${recipeTimes}">
 		<input type="hidden" value="${times}" name="recipeTimes">
 	</c:forEach>
-<table id="recipeList" class="table table-hover text-center">
-	<thead>
-		<tr>
-			<th>No.</th>
-			<th>분류</th>
-			<th>대표 이미지</th>
-			<th>작성자</th>
-			<th>제목</th>
-			<th>작성일</th>
-			<th>조회수</th>
-			<th>좋아요 수</th>
-		</tr>
-	</thead>
-	<tbody>
-		<c:forEach items="${recipeList}" var="recipe">
+	<table id="recipeList" class="table table-hover text-center">
+		<thead>
 			<tr>
-				<td class="rNo" style="width: 50px;">${recipe.no}</td>
-				<td class="rRecipeType">${recipe.recipeType}</td>
-				<td class="rTopImage"><img src="upImage/${recipe.topImage}" alt="이미지 오류" style="max-width: 160px; height: 100px;"></td>
-				<td class="rId">${recipe.id}</td>
-				<td class="rTitle"><a class="recipeContentView" href="recipeContentView?no=${recipe.no}">${recipe.title}</a></td>
-				<td class="rWriteTime">${recipe.writeTime}</td>
-				<td class="rHits">${recipe.hits}</td>
-				<td>${recipe.likes}</td>
+				<th>No.</th>
+				<th>분류</th>
+				<th>대표 이미지</th>
+				<th>작성자</th>
+				<th>제목</th>
+				<th>작성일</th>
+				<th>조회수</th>
+				<th>좋아요 수</th>
 			</tr>
-		</c:forEach>
-	</tbody>
-</table>
+		</thead>
+		<tbody>
+			<c:forEach items="${recipeList}" var="recipe">
+				<tr>
+					<td class="rNo" style="width: 50px;">${recipe.no}</td>
+					<td class="rRecipeType">${recipe.recipeType}</td>
+					<td class="rTopImage"><img src="upImage/${recipe.topImage}" alt="이미지 오류" style="max-width: 160px; height: 100px;"></td>
+					<td class="rId">${recipe.id}</td>
+					<td class="rTitle"><a class="recipeContentView" href="recipeContentView?no=${recipe.no}">${recipe.title}</a></td>
+					<td class="rWriteTime">${recipe.writeTime}</td>
+					<td class="rHits">${recipe.hits}</td>
+					<td>${recipe.likes}</td>
+				</tr>
+			</c:forEach>
+		</tbody>
+	</table>
 </div>
 
 <!-- 페이지 표시 -->
@@ -175,15 +175,12 @@ $(document).ready(function() {
 				$.ajax({
 					url : purl,
 					type : "get",
-					data : "",
+					data : formData,
 					success : function(data) {
-						$("#hjumbo").text("게시판" + pageNo + "페이지입니다");
 						$("#submain").html(data);
-						
 					},
 					error : function() {
-						$("#mbody").text("서버접속 실패");
-						$("#modal").trigger("click");
+						alert("에러입니다.");
 					}
 				}); //ajax
 			}); //on-click

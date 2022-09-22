@@ -247,6 +247,7 @@ public class YJController {
 		System.out.println(request.getParameter("pageNo"));
 		com = new YJPageListCommand();
 		com.execute(request, model);
+		requestSetAttr(request);
 		return "recipepageBoard";
 	}
 	
@@ -262,17 +263,7 @@ public class YJController {
 		System.out.println("recipeContentView");
 		com = new YJRecipeContentViewCommand();
 		com.execute(request, model);
-		request.setAttribute("viewType", request.getParameter("viewType"));
-		request.setAttribute("search", request.getParameter("search"));
-		request.setAttribute("searchWhat", request.getParameter("searchWhat"));
-		String[] recipeTypes = request.getParameterValues("recipeType[]");
-		String[] recipeStyles = request.getParameterValues("recipeStyle[]");
-		String[] recipePeoples = request.getParameterValues("recipePeople[]");
-		String[] recipeTimes = request.getParameterValues("recipeTime[]");
-		request.setAttribute("recipeTypes", recipeTypes);
-		request.setAttribute("recipeStyles", recipeStyles);
-		request.setAttribute("recipePeoples", recipePeoples);
-		request.setAttribute("recipeTimes", recipeTimes);
+		requestSetAttr(request);
 		return "recipeContentView";
 	}
 	@RequestMapping("/recipeComment")
@@ -328,17 +319,7 @@ public class YJController {
 	@RequestMapping("/recipeRegister")
 	public String recipeintro1(HttpServletRequest request, Model model) {
 		System.out.println("recipeRegister");
-		request.setAttribute("viewType", request.getParameter("viewType"));
-		request.setAttribute("search", request.getParameter("search"));
-		request.setAttribute("searchWhat", request.getParameter("searchWhat"));
-		String[] recipeTypes = request.getParameterValues("recipeType[]");
-		String[] recipeStyles = request.getParameterValues("recipeStyle[]");
-		String[] recipePeoples = request.getParameterValues("recipePeople[]");
-		String[] recipeTimes = request.getParameterValues("recipeTime[]");
-		request.setAttribute("recipeTypes", recipeTypes);
-		request.setAttribute("recipeStyles", recipeStyles);
-		request.setAttribute("recipePeoples", recipePeoples);
-		request.setAttribute("recipeTimes", recipeTimes);
+		requestSetAttr(request);
 		return "recipeRegister";
 	}
 	
@@ -580,5 +561,18 @@ public class YJController {
 			return true;
 		}
 		return false;
+	}
+	public void requestSetAttr(HttpServletRequest request) {
+		request.setAttribute("viewType", request.getParameter("viewType"));
+		request.setAttribute("search", request.getParameter("search"));
+		request.setAttribute("searchWhat", request.getParameter("searchWhat"));
+		String[] recipeTypes = request.getParameterValues("recipeType[]");
+		String[] recipeStyles = request.getParameterValues("recipeStyle[]");
+		String[] recipePeoples = request.getParameterValues("recipePeople[]");
+		String[] recipeTimes = request.getParameterValues("recipeTime[]");
+		request.setAttribute("recipeTypes", recipeTypes);
+		request.setAttribute("recipeStyles", recipeStyles);
+		request.setAttribute("recipePeoples", recipePeoples);
+		request.setAttribute("recipeTimes", recipeTimes);
 	}
 }
