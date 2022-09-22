@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans
+	xmlns="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/security 
+		http://www.springframework.org/schema/security/spring-security.xsd"
+>
+	<!-- beans:beans엘리먼트(태그)안에 security설정 엘리먼트(태그) -->
+	<!-- 권한처리를 하지 않을 경로 설정 -->
+	<!--
+	<http pattern="/**" security="none"></http>
+	-->
+	<!-- 권한처리(authority) -->
+	<!-- 권한처리는 http엘리먼트 사용 -->
+	<http auto-config="true" use-expressions="true">
+		<!--
+			auto-config="true"는 form기반으로 로그인 하고
+			use-expressions="true"는 spring의 EL 언어 사용
+		-->
+		<access-denied-handler error-page="/exsample"/> <!-- 로그인 성공시 첫번째 페이지 -->
+		<!-- 요청시 '/' 필수 -->
+		<!-- 로그인 이후 로그인, 회원가입 등 권한 없는 페이지 접속 시도시 요청 경로 -->
+		<!-- security에서는 기본적으로 iframe사용을 제한하는데 이를 풀기 위해 header 사용 -->
+		<headers>
+			<frame-options disabled="true"></frame-options>
+		</headers>
+		<!-- 각 요청별 권한 지정은 intercept-url태그 사용 지정 -->
+		<intercept-url pattern="/" access="permitAll"/>
+		<intercept-url pattern="/exsample" access="permitAll"/>
+		<intercept-url pattern="/image/**" access="permitAll"/>
+		<intercept-url pattern="/text/**" access="permitAll"/>
+		<intercept-url pattern="/css/**" access="permitAll"/>
+		<intercept-url pattern="/processLogin" access="permitAll"/>
+		<intercept-url pattern="/idCheck" access="isAnonymous()"/>
+		<intercept-url pattern="/phoneCheck" access="isAnonymous()"/>
+		<intercept-url pattern="/loginView" access="isAnonymous()"/>
+		<intercept-url pattern="/joinResultView" access="isAnonymous()"/>
+		<intercept-url pattern="/joinView" access="isAnonymous()"/>
+		<intercept-url pattern="/join" access="isAnonymous()"/>
+		<intercept-url pattern="/findIdView" access="isAnonymous()"/>
+		<intercept-url pattern="/findId" access="isAnonymous()"/>
+		<intercept-url pattern="/changePwGoView" access="isAnonymous()"/>
+		<intercept-url pattern="/changePwGo" access="isAnonymous()"/>
+		<intercept-url pattern="/changePwView" access="isAnonymous()"/>
+		<intercept-url pattern="/changePw" access="isAnonymous()"/>
+		<intercept-url pattern="/login" access="isAnonymous()"/>
+		<intercept-url pattern="/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_MANAGE')" requires-channel="https"/>
+		<!-- requires-channel="https"는 https로 접근하고 hasRole('ROLE_USER')는 회원만 접근 -->
+		<!-- intercept-url 우선순위는 위에 있을수록 높음 -->
+		<!-- isAnonymous()나 hasRole()은 spring EL제공 메서드 -->
+		<!-- Role등급은 ROLE_USER, ROLE_ADMIN, ROLE_MANAGE 등이 있음 -->
+		
+		<!-- form-login 태그는 로그인 관련 사항 설정 -->
+		<form-login 
+			login-processing-url="/login"
+			login-page="/loginView"
+			username-parameter="id"
+			password-parameter="pw"
+			default-target-url="/exsample"
+			authentication-failure-url="/processLogin?error=1"
+			always-use-default-target="true"
+		/>
+		<!-- 
+			form-login 태그는 속성으로 처리
+			html form에서 action 속성 값으로 기본값은 /login이며 이때는 action="login"
+			login-processing-url 속성은 login요청 경로이며 /login시는 생략
+			login-page속성은 로그인 창의 요청 경로
+			username-parameter속성은 form에서 id를 나타내는 name속성 값 input type="text" name="pid"
+			default-target-url속성은 로그인 성공시 이동할 요청 경로
+			authentication-failure-url속성은 로그인인증 실패치 요청 경로(get방식)
+			always-use-default-target속성은 성공시 가는 default-target-url을 확실히 보장함
+		 -->
+		 <!-- logout태그는 로그아웃처리(스프링에서는 로그아웃도 form을 이용해야함) -->
+		 <logout
+		 	invalidate-session="true"
+		 	logout-url="/logout"
+		 	logout-success-url="/processLogin?logout=1"
+		 	delete-cookies="JSESSIONID, remember-me"
+		 />
+		 <!--
+		 	invalidate-session속성은 세션 제거
+		 	logout-url속성은 로그아웃 창의 요청 경로
+		 	logout-success-url속성은 로그아웃 성공시 요청 경로
+		 	delete-cookies는 쿠기 삭제 기본인 JSESSIONID와 remember-me시 사용하는 remember-me 쿠키 삭제
+		 	명시적으로 로그아웃하지 않았을 때 다시 사이트 입장하면 로그인 상태 유지됨
+		 -->
+		 
+		 <remember-me
+		 	remember-me-parameter="remember-me"
+		 	remember-me-cookie="remember-me"
+		 	key="yjkey"
+		 	token-validity-seconds="3600"
+		 />
+		 <!--
+		 	사이트 간 요청 위조 CSRF(Cross-site Request Forgery)는
+		 	다른 사이트에서 페이지를 위조하여 접근하는 해킹을 말하며
+		 	spring security는 이를 예방할 수 있음
+		 -->
+		 <csrf disabled="false"/> <!-- 기본값으로 csrf예방 기능 동작 -->
+	</http>
+	
+	<!-- 인증처리(authentication) -->
+	<authentication-manager>
+		<authentication-provider user-service-ref="customUserDetailService">
+			<password-encoder ref="passwordEncoder" />
+		</authentication-provider>
+	</authentication-manager>
+	<!-- 인증처리 클래스로 UserDetailService인터페이스를 구현한 클래스로 개발자가 만듦 -->
+	<beans:bean id="customUserDetailService" class="com.yorijori.project.security.CustomUserDetailService" />
+	<!-- 암호화 된 패스워드 처리 빈 -->
+	<beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+</beans:beans>

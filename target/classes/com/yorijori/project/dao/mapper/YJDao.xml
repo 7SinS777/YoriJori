@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yorijori.project.dao.YJDao">
+	<insert id="join" parameterType="com.yorijori.project.dto.YJDto">
+		insert into MEMBER (NAME, ID, PW, EMAIL, PHONE, GENDER)
+		values (#{name}, #{id}, #{pw}, #{email}, #{phone}, #{gender})
+	</insert>
+	<select id="idCheck" parameterType="String" resultType="com.yorijori.project.dto.YJDto">
+		select * from MEMBER where ID = #{id}
+	</select>
+	<select id="phoneCheck" parameterType="String" resultType="com.yorijori.project.dto.YJDto">
+		select * from MEMBER where PHONE = #{phone}
+	</select>
+	<select id="login" parameterType="String" resultType="com.yorijori.project.dto.YJDto">
+		select * from MEMBER where ID = #{username}
+	</select>
+	<select id="mypage" parameterType="String" resultType="com.yorijori.project.dto.YJDto">
+		select * from MEMBER where ID = #{userId}
+	</select>
+	<select id="findId" parameterType="String" resultType="String">
+		select ID from MEMBER where phone = #{phoneF}
+	</select>
+	<select id="changePw" parameterType="com.yorijori.project.dto.YJDto" resultType="String">
+		select PHONE from MEMBER where ID = #{id}
+	</select>
+	<select id="checkPwGo" parameterType="com.yorijori.project.dto.YJDto" resultType="com.yorijori.project.dto.YJDto">
+		select * from MEMBER where ID = #{id}
+	</select>
+	<update id="changePwGo" parameterType="com.yorijori.project.dto.YJDto">
+		update MEMBER set PW = #{pw} where ID = #{id} and PHONE = #{phone}
+	</update>
+	<select id="pageList" parameterType="int" resultType="com.yorijori.project.dto.YJRecipeDto">
+		<![CDATA[
+			SELECT * FROM(SELECT A.*,ROWNUM AS RNUM
+			FROM (SELECT * FROM RECIPELIST ORDER BY NO DESC, TITLE ASC)A)
+			WHERE RNUM >= #{startNo} AND RNUM <= #{startNo} + 9
+		]]>
+	</select>
+	<select id="recipeAllViewTimes" resultType="com.yorijori.project.dto.YJRecipeDto">
+		select * from RECIPELIST order by NO desc
+	</select>
+	<select id="recipeAllViewHits" resultType="com.yorijori.project.dto.YJRecipeDto">
+		select * from RECIPELIST order by HITS desc
+	</select>
+	<select id="recipeContentView" parameterType="int" resultType="com.yorijori.project.dto.YJRecipeDto">
+		select * from RECIPELIST where NO = #{no}
+	</select>
+	<update id="upHit" parameterType="int">
+		update RECIPELIST set HITS = HITS + 1 where NO = #{no}
+	</update>
+	<select id="recipeWriteContent" parameterType="int" resultType="com.yorijori.project.dto.YJRecipeWriteDto">
+		select * from RECIPEWRITE where RECIPEGROUP = #{no} order by RECIPENO asc
+	</select>
+	<select id="memberOutCheck" parameterType="String" resultType="com.yorijori.project.dto.YJDto">
+		select * from MEMBER where ID = #{id}
+	</select>
+	<delete id="memberOut" parameterType="String">
+		delete from MEMBER where ID = #{id}
+	</delete>
+	<insert id="recipe" parameterType="com.yorijori.project.dto.YJRecipeDto">
+		insert into RECIPELIST(NO, ID, TITLE, RECIPEINTRO, WRITETIME, HITS, COMMENTS, LIKES, TOPIMAGE, RECIPETYPE, RECIPESTYLE, RECIPEPEOPLE, RECIPETIME)
+		values(YJ_RECIPE_SEQ.nextval, #{id}, #{title}, #{recipeIntro}, #{writeTime}, 0, 0, 0, #{topImage}, #{recipeType}, #{recipeStyle}, #{recipePeople}, #{recipeTime})
+	</insert>
+	<select id="recipeNo" parameterType="com.yorijori.project.dto.YJRecipeDto" resultType="int">
+		select NO from RECIPELIST where ID = #{id} and TITLE = #{title} and TOPIMAGE = #{topImage}
+	</select>
+	<insert id="recipeWrite" parameterType="com.yorijori.project.dto.YJRecipeWriteDto">
+		insert into RECIPEWRITE(RECIPECONTENT, RECIPEIMAGE, RECIPENO, RECIPEGROUP)
+		values(#{recipeContent}, #{recipeImage}, #{recipeNo}, #{recipeGroup})
+	</insert>
+	<select id="recipeSelectContent" parameterType="int" resultType="com.yorijori.project.dto.YJRecipeDto">
+		select * from RECIPELIST where NO = #{no}
+	</select>
+	<update id="recipeModify" parameterType="com.yorijori.project.dto.YJRecipeDto">
+		update RECIPELIST
+		set TITLE = #{title},
+		RECIPEINTRO = #{recipeIntro},
+		RECIPETYPE= #{recipeType},
+		RECIPESTYLE = #{recipeStyle},
+		RECIPEPEOPLE = #{recipePeople},
+		RECIPETIME = #{recipeTime},
+		TOPIMAGE = #{topImage}
+		where NO = #{no}
+	</update>
+	<delete id="deleteWrite" parameterType="int">
+		delete from RECIPEWRITE where RECIPEGROUP = #{recipeGroup}
+	</delete>
+	<insert id="writeComment" parameterType="com.yorijori.project.dto.YJRecipeCommentsDto">
+		insert into RECIPECOMMENTS(ID, COMMENTARY, COMMENTTIME, RELATION, COMMENTORDER, COMMENTGROUP, COMMENTNO)
+		values(#{id}, #{commentary}, #{commentTime}, #{relation}, #{commentOrder}, #{commentGroup}, YJ_RECIPECOMMENT_SEQ.nextval)
+	</insert>
+	<select id="recipeComments" parameterType="int" resultType="com.yorijori.project.dto.YJRecipeCommentsDto">
+		select * from RECIPECOMMENTS where COMMENTGROUP = #{no}
+	</select>
+	<delete id="commentDelete" parameterType="int">
+		delete from RECIPECOMMENTS where COMMENTNO = #{commentNo}
+	</delete>
+	<update id="commentModify" parameterType="com.yorijori.project.dto.YJRecipeCommentsDto">
+		update RECIPECOMMENTS set COMMENTARY = #{commentary} where COMMENTNO = #{commentNo}
+	</update>
+	<update id="inforModify1" parameterType="com.yorijori.project.dto.YJDto">
+		update MEMBER
+		set PROFILEIMAGE = #{profileImage},
+		NICKNAME = #{nickName},
+		BIRTHDAY = #{birthday}
+		where ID = #{id}
+	</update>
+	<update id="inforModify2" parameterType="com.yorijori.project.dto.YJDto">
+		update MEMBER
+		set NICKNAME = #{nickName},
+		BIRTHDAY = #{birthday}
+		where ID = #{id}
+	</update>
+	<select id="searchTitleT" parameterType="String" resultType="com.yorijori.project.dto.YJRecipeDto">
+		select * from RECIPELIST where TITLE LIKE '%' || #{search} || '%' order by NO desc
+	</select>
+	<select id="searchTitleH" parameterType="String" resultType="com.yorijori.project.dto.YJRecipeDto">
+		select * from RECIPELIST where TITLE LIKE '%' || #{search} || '%' order by HITS desc
+	</select>
+	<select id="sContent" parameterType="String" resultType="int">
+		select distinct RECIPEGROUP from RECIPEWRITE where RECIPECONTENT LIKE '%' || #{search} || '%'
+	</select>
+	<select id="sTitle" parameterType="String" resultType="int">
+		select distinct NO from RECIPELIST where TITLE LIKE '%' || #{search} || '%'
+	</select>
+	<select id="searchTitleAndContent" parameterType="int" resultType="com.yorijori.project.dto.YJRecipeDto">
+		select * from RECIPELIST where NO = #{no}
+	</select>
+	<select id="searchContent" parameterType="int" resultType="com.yorijori.project.dto.YJRecipeDto">
+		select * from RECIPELIST where NO = #{no}
+	</select>
+	<select id="searchWriterT" parameterType="String" resultType="com.yorijori.project.dto.YJRecipeDto">
+		select * from RECIPELIST where ID LIKE '%' || #{search} || '%' order by NO desc
+	</select>
+	<select id="searchWriterH" parameterType="String" resultType="com.yorijori.project.dto.YJRecipeDto">
+		select * from RECIPELIST where ID LIKE '%' || #{search} || '%' order by Hits desc
+	</select>
+	<delete id="deleteRecipe" parameterType="int">
+		delete from RECIPELIST where NO = #{no}
+	</delete>
+	<delete id="deleteRecipeWrite" parameterType="int">
+		delete from RECIPEWRITE where RECIPEGROUP = #{no}
+	</delete>
+	<select id="recipeTypes" parameterType="String" resultType="int">
+		select distinct NO from RECIPELIST where RECIPETYPE = #{type} order by NO desc
+	</select>
+	<select id="recipeStyles" parameterType="String" resultType="int">
+		select distinct NO from RECIPELIST where RECIPESTYLE = #{style} order by NO desc
+	</select>
+	<select id="recipePeoples" parameterType="String" resultType="int">
+		select distinct NO from RECIPELIST where RECIPEPEOPLE = #{people} order by NO desc
+	</select>
+	<select id="recipeTimes" parameterType="String" resultType="int">
+		select distinct NO from RECIPELIST where RECIPETIME = #{time} order by NO desc
+	</select>
+	<select id="allSearch" parameterType="int" resultType="com.yorijori.project.dto.YJRecipeDto">
+		select * from RECIPELIST where NO = #{no}
+	</select>
+</mapper>

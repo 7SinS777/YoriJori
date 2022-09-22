@@ -1,0 +1,13 @@
+@charset "EUC-KR";
+
+button.nonSelected, button.selected {
+	width: 100px; border-radius: 12px;
+}
+button.nonSelected {
+	background-color: white;
+	color: black;
+}
+button.selected {
+	background-color: blue;
+	color: white;
+}
